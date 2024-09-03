@@ -19,7 +19,8 @@ fi
 convertToSec() {
     local time=$1
     
-    if [[ $time =~ ^[0-9]+s$ ]]; then
+    if [[ $time =~ ^[0-9]+s$ ]]; 
+    then
         # Time is already in seconds
         echo "${time%s}"
     elif [[ $time =~ ^[0-9]+min$ ]]; then
@@ -36,7 +37,8 @@ abs() {
     local value=$1
 
     # Check if the value is negative
-    if [ "$value" -lt 0 ]; then
+    if [ "$value" -lt 0 ]; 
+    then
         # Multiply by -1 to make it positive
         value=$(( value * -1 ))
     fi
@@ -59,9 +61,9 @@ echo -e "The Reboot Watchdog determines how long the Watchdog timer should wait 
 
 echo -e "\n\n ${R}Please input the desired Watchdog sampling period: \n" 
 read -r WDRUN
-WDRUN_SEC=$(convertToSec $(abs "$WDRUN"))
-# Check if REBT_SEC is less than WDRUN_SEC + 15s
-if [ "$WDRUN_SEC" -lt 0 ]
+WDRUN_SEC=$(convertToSec "$(abs "$WDRUN")")
+# Check if WDRUN_SEC is less than or equal to 0
+if [ "$WDRUN_SEC" -le 0 ]
 then
     echo -e "\n${R}ERROR: Input Watchdog sampling period is or less than zero!"
     sleep 10
@@ -73,9 +75,9 @@ fi
 
 echo -e "\n\n ${R}Please input the desired reboot Watchdog sampling period (15s minimum difference): \n"
 read -r WDREBT
-WDREBT_SEC=$(convertToSec $(abs "$WDREBT"))
+WDREBT_SEC=$(convertToSec "$(abs "$WDREBT")")
 # Check if REBT_SEC is less than WDRUN_SEC + 15s
-if [ "$WDREBT_SEC" -lt "$WDRUN_SEC"+15 ]
+if [ "$WDREBT_SEC" -lt $((WDRUN_SEC+15)) ]
 then
     echo -e "\n${R}ERROR: Input Reboot sampling period is less than the Watchdog sampling period plus 15 seconds!"
     sleep 10
@@ -94,7 +96,7 @@ echo -e "\n${W}Are you sure you want to enable the Watchdog with these variables
 read -r CONFIRM
 
 ## Validate input and confirmation
-if [ "$CONFIRM" != "Y" ] && [ "$CONFIRM" != "y" ]
+if [[ "$CONFIRM" != "Y" && "$CONFIRM" != "y" ]]
 then
     echo -e "\n${R}Watchdog Not Enabled, Cancelled"
     
