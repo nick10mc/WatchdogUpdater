@@ -34,7 +34,7 @@ sudo -E bash -c "
     echo -e '\nSetting file permissions'
     chmod 755 "/usr/local/bin/watchdog"
     chmod 600 "/home/$acct/Desktop/testpanic"
-    chmod 555 "/home/$acct/Desktop/testpanic"
+    chmod 555 "/home/$acct/Desktop/DeleteTestPanic"
     whoami
 "
 
