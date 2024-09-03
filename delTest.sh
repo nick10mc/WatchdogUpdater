@@ -26,6 +26,6 @@ sudo -E bash -c "
 
 # Remove the DeleteTestPanic file
 echo -e "\nDeleting this script in 10s..."
-rm $0
+rm -f $0
 sleep 10
 exit
