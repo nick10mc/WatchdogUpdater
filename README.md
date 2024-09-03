@@ -19,7 +19,7 @@ gh repo clone WatchdogUpdater
 ```
 
 ### Installation:
-To install the WatchdogUpdater, simply execute the install.sh script located in the /home/$USER/WatchdogUpdater folder.
+To install the WatchdogUpdater, simply add owner permisions to and execute the install.sh script located in the /home/$USER/WatchdogUpdater folder.
 
 ### Usage: 
 1. Open a terminal, and type in the following: watchdog
