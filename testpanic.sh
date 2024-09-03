@@ -7,6 +7,11 @@
 
 ##### WARNING, this script should ONLY be used to test the watchdog timer
 # Requires permission to run
+if [ ! -x "$0" ]; then
+    sudo chmod +x "$0"
+fi
+
+
 W="\033[1;37m" # White
 R="\033[1;31m" # Red
 
@@ -33,6 +38,30 @@ else
     echo -e "\n${R}Kernel Panic Confirmed..."
     # Set confFile location
     confFile="/etc/systemd/system.conf"
+
+    ## Check if the lines already exist
+    ## Check the Runtime Watchdog first
+    <<'EOF'
+    if grep -q "^RuntimeWatchdogSec=" "$confFile"
+    then
+        # Lines exist, replace them
+        sudo sed -i "s/^RuntimeWatchdogSec=.*/RuntimeWatchdogSec=$WDRUN_SEC/" "$confFile"
+    else
+        ## Append the following to the file:
+        sudo echo -e "RuntimeWatchdogSec=$WDRUN_SEC" >> "$confFile"
+    fi
+
+    ## Now, check the Reboot Watchdog
+    if grep -q "^RebootWatchdogSec=" "$confFile"
+    then
+        sudo sed -i "s/^RebootWatchdogSec=.*/RebootWatchdogSec=$WDREBT_SEC/" "$confFile"
+    else
+        ## Append the following to the file:
+        sudo echo "RebootWatchdogSec=$WDREBT_SEC" >> "$confFile"
+    fi
+
+    echo -e "\n\t${G}Watchdog Enabled!"
+EOF
 
     # Set countdown time to kernel panic
     countdown=10
