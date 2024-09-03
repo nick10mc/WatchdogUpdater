@@ -23,10 +23,15 @@ convertToSec() {
     then
         # Time is already in seconds
         echo "${time%s}"
-    elif [[ $time =~ ^[0-9]+min$ ]]; then
+    elif [[ $time =~ ^[0-9]+min$ ]]; 
+    then
         # Time is in minutes, convert to seconds
         local minutes="${time%min}"
         echo $((minutes * 60))
+    elif [[ $time =~ ^[0-9]+$ ]]; 
+    then
+        # Time is in seconds if no unit is provided
+        echo "$time"
     else
         echo "Invalid time format: $time" >&2
         exit 1
@@ -63,7 +68,7 @@ echo -e "\n\n ${R}Please input the desired Watchdog sampling period: \n"
 read -r WDRUN
 WDRUN_SEC=$(convertToSec "$(abs "$WDRUN")")
 # Check if WDRUN_SEC is less than or equal to 0
-if [ "$WDRUN_SEC" -le 0 ]
+if [ "$WDRUN_SEC" -le 0 ];
 then
     echo -e "\n${R}ERROR: Input Watchdog sampling period is or less than zero!"
     sleep 10
@@ -77,12 +82,13 @@ echo -e "\n\n ${R}Please input the desired reboot Watchdog sampling period (15s 
 read -r WDREBT
 WDREBT_SEC=$(convertToSec "$(abs "$WDREBT")")
 # Check if REBT_SEC is less than WDRUN_SEC + 15s
-if [ "$WDREBT_SEC" -lt $((WDRUN_SEC+15)) ]
+if [ "$WDREBT_SEC" -lt $((WDRUN_SEC+15)) ];
 then
     echo -e "\n${R}ERROR: Input Reboot sampling period is less than the Watchdog sampling period plus 15 seconds!"
     sleep 10
     exit
-elif [ "$WDREBT_SEC" -eq 0 ]
+elif [ "$WDREBT_SEC" -eq 0 ];
+then
     echo -e "\n${R}ERROR: Input Reboot sampling period is zero!"
     sleep 10
     exit
@@ -96,7 +102,7 @@ echo -e "\n${W}Are you sure you want to enable the Watchdog with these variables
 read -r CONFIRM
 
 ## Validate input and confirmation
-if [[ "$CONFIRM" != "Y" && "$CONFIRM" != "y" ]]
+if [[ "$CONFIRM" != "Y" && "$CONFIRM" != "y" ]];
 then
     echo -e "\n${R}Watchdog Not Enabled, Cancelled"
     
@@ -107,7 +113,7 @@ else
 
     ## Check if the lines already exist
     ## Check the Runtime Watchdog first
-    if grep -q "^RuntimeWatchdogSec=" "$confFile"
+    if grep -q "^RuntimeWatchdogSec=" "$confFile";
     then
         # Lines exist, replace them
         sudo sed -i "s/^RuntimeWatchdogSec=.*/RuntimeWatchdogSec=$WDRUN_SEC/" "$confFile"
@@ -117,7 +123,7 @@ else
     fi
 
     ## Now, check the Reboot Watchdog
-    if grep -q "^RebootWatchdogSec=" "$confFile"
+    if grep -q "^RebootWatchdogSec=" "$confFile";
     then
         sudo sed -i "s/^RebootWatchdogSec=.*/RebootWatchdogSec=$WDREBT_SEC/" "$confFile"
     else
