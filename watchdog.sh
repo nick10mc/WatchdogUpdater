@@ -96,26 +96,26 @@ else
     echo -e "\n\t ${G}$WDREBT_SEC Confirmed!"
 fi
 
-echo -e "\n\n ${R}Please input the desired load-based software Watchdog load limit (over a 1 minute span). Integer only, minimum 10: \n"
+echo -e "\n\n ${R}Please input the desired load-based software Watchdog load limit (over a 1 minute span). Integer only, minimum 20: \n"
 read -r max1
 max1_=$(abs "$max1")
-# Check if max1 is less than 10
-if [ "$max1_" -lt 10 ];
+# Check if max1 is less than 20
+if [ "$max1_" -lt 20 ];
 then
-    echo -e "\n${R}ERROR: Load limit is less than 10%!"
+    echo -e "\n${R}ERROR: Load limit is less than 20%!"
     sleep 10
     exit
 else
     echo -e "\n\t ${G}$max1_ Confirmed!"
 fi
 
-echo -e "\n\n ${R}Please input the desired load-based software Watchdog load limit (over a 5 minute span). Integer only, minimum 15: \n"
+echo -e "\n\n ${R}Please input the desired load-based software Watchdog load limit (over a 5 minute span). Integer only, minimum 20: \n"
 read -r max5
 max5_=$(abs "$max5")
-# Check if max5 is less than 15
-if [ "$max5_" -lt 15 ];
+# Check if max5 is less than 20
+if [ "$max5_" -lt 20 ];
 then
-    echo -e "\n${R}ERROR: Load limit is less than 15%!"
+    echo -e "\n${R}ERROR: Load limit is less than 20%!"
     sleep 10
     exit
 else
@@ -128,13 +128,14 @@ max15_=$(abs "$max15")
 # Check if max15 is less than 20
 if [ "$max15_" -lt 20 ];
 then
-    echo -e "\n${R}ERROR: Load limit is less than 15%!"
+    echo -e "\n${R}ERROR: Load limit is less than 20%!"
     sleep 10
     exit
 else
     echo -e "\n\t ${G}$max15_ Confirmed!"
 fi
 
+# Temperature sensor is disabled by default. Not sure if Broadcomm chips have sensors accesible to OS. Poor documentation
 #echo -e "\n\n ${R}Please input the desired maxmimum temperature in degrees C. Default 120C. Min 40C: \n"
 #read -r maxT
 #maxT_=$(abs "$maxT")
@@ -193,13 +194,42 @@ else
         sudo echo "dtparam=watchdog=on" >> "$bootConf"
     fi
 
-    # Finally, set the "load based" software watchdog timer
+    # Now, check to see if the device was defined
+    if grep -q "^watchdog-device" "$wdtConf";
+    then
+        sudo sed -i "s/^watchdog-device.*/watchdog-device = /dev/watchdog/" "$wdtConf"
+    else
+        ## Append the following to the file:
+        sudo echo "watchdog-device = /dev/watchdog" >> "$wdtConf"
+    fi
+
+    # Now, check to see if the software WDT timeout was defined
+    if grep -q "^watchdog-timeout" "$wdtConf";
+    then
+        sudo sed -i "s/^watchdog-timeout.*/watchdog-timeout = 15" "$wdtConf" # Maximum on Pis is alledgedly 15s. Little or no need for modifying that
+    else
+        ## Append the following to the file:
+        sudo echo "watchdog-timeout = 15" >> "$wdtConf"
+    fi
+
+    # Set the "load based" software watchdog timer
     if grep -q "^max-load-1 =" "$wdtConf";
     then
         sudo sed -i "s/^max-load-1 =.*/max-load-1 = $max1_/" "$wdtConf"
     else
         ## Append the following to the file:
         sudo echo "max-load-1 = $max1_" >> "$wdtConf"
+    fi
+
+    # Finally, set the software load based watchdog timer as "real time" to prevent it from being swapped out of memory and set priority to 1
+    if [ grep -q "^realtime =" "$wdtConf" ] && [ grep -q "^priority =" "$wdtConf" ]  ;
+    then
+        sudo sed -i "realtime = yes" "$wdtConf"
+        sudo sed -i "priority = 1" "$wdtConf"
+    else
+        ## Append the following to the file:
+        sudo echo "realtime = yes" >> "$wdtConf"
+        sudo echo "priority = 1" >> "$wdtConf"
     fi
 
     sudo systemctl enable watchdog
@@ -213,8 +243,10 @@ echo -e "\n\t${B}Restarting ${W}systemctl ${B}daemon..."
 sudo systemctl daemon-reload
 echo -e "\n\t${G}Done!"
 
-echo -e "\n${W}Confirmation via dmesg:"
+echo -e "\n${W}Confirmation via dmesg:${B}"
 dmesg | grep watchdog
+echo -e "\n${W}Confirmation via systemctl:${B}"
+sudo systemctl status watchdog
 
 echo -e "\n${W}For more information on the Linux software based Watchdog daemon configuration settings, visit https://linux.die.net/man/5/watchdog.conf \n"
 countdown=10
