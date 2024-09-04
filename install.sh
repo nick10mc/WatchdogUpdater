@@ -35,6 +35,13 @@ sudo -E bash -c "
     chmod 755 "/usr/local/bin/watchdog"
     chmod 755 "/home/$acct/Desktop/testpanic"
     chmod 555 "/home/$acct/Desktop/DeleteTestPanic"
+
+    # Install the "load based" watchdog
+    echo -e '\nInstalling the "Load Based" watchdog software package...'
+    apt update
+    apt upgrade -y
+    apt install watchdog
+    
     whoami
 "
 

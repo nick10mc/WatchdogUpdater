@@ -1,0 +1,7 @@
+#1 - Login to github using auth token: gh auth login
+#2 use "gh repo clone WatchdogUpdater" to download the repo
+#3 - Install using the installer in the /home/osu/WatchdogUpdater folder
+#4 - Run the "watchdog" command by typing it in a terminal
+Optional - reboot
+#5 - run the "testpanic" command located on the desktop
+#6 - shred "testpanic" with shred -u /home/{$USER}/Desktop/testpanic
