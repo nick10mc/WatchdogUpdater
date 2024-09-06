@@ -153,11 +153,6 @@ fi
 echo -e "\n${W}Are you sure you want to enable the Watchdog with these variables? \nY/N?"
 read -r CONFIRM
 
-# Export our values so they can be used by root
-#export CONFIRM confFile bootConf wdtConf max15_ max5_ max1_ WDREBT_SEC WDRUN_SEC
-# Run the following as root - issues with file permissions with system files requires this
-#sudo -E bash -c 
-
 ## Validate input and confirmation
 if [[ "$CONFIRM" != "Y" && "$CONFIRM" != "y" ]];
 then
@@ -217,13 +212,31 @@ else
         sudo echo "watchdog-timeout=15" >> "$wdtConf"
     fi
 
-    # Set the "load based" software watchdog timer
+    # Set the "load based" software watchdog timer (1min)
     if grep -q "^max-load-1" "$wdtConf";
     then
         sudo sed -i 's/^max-load-1.*/max-load-1=$max1_/' "$wdtConf"
     else
         ## Append the following to the file:
         sudo echo "max-load-1=$max1_" >> "$wdtConf"
+    fi
+
+    # Set the "load based" software watchdog timer (5min)
+    if grep -q "^max-load-5" "$wdtConf";
+    then
+        sudo sed -i 's/^max-load-5.*/max-load-5=$max5_/' "$wdtConf"
+    else
+        ## Append the following to the file:
+        sudo echo "max-load-5=$max5_" >> "$wdtConf"
+    fi
+
+    # Set the "load based" software watchdog timer (15min)
+    if grep -q "^max-load-15" "$wdtConf";
+    then
+        sudo sed -i 's/^max-load-15.*/max-load-15=$max15_/' "$wdtConf"
+    else
+        ## Append the following to the file:
+        sudo echo "max-load-15=$max15_" >> "$wdtConf"
     fi
 
     # Finally, set the software load based watchdog timer as "real time" to prevent it from being swapped out of memory and set priority to 1
@@ -233,14 +246,15 @@ else
         sudo sed -i 'priority=1' "$wdtConf"
     else
         ## Append the following to the file:
-        sudo echo "realtime = yes" >> "$wdtConf"
-        sudo echo "priority = 1" >> "$wdtConf"
+        sudo echo "realtime=yes" >> "$wdtConf"
+        sudo echo "priority=1" >> "$wdtConf"
     fi
 
+    # Enable and start the watchdog.
     sudo systemctl enable watchdog
     sudo systemctl start watchdog
 
-    echo -e "\n\t${G}Watchdog Enabled!"
+    echo -e "\n\t${G}Configuration files updated!"
 fi
 
 # Restart the systemctl daemon without rebooting
@@ -248,16 +262,25 @@ echo -e "\n\t${B}Restarting ${W}systemctl ${B}daemon..."
 sudo systemctl daemon-reload
 echo -e "\n\t${G}Done!"
 
+# Confirm that both watchdogs are enabled
 echo -e "\n${W}Confirmation via dmesg:${B}"
 dmesg | grep watchdog
 echo -e "\n${W}Confirmation via systemctl:${B}"
-sudo systemctl status watchdog
+sudo systemctl status watchdog --no-pager
+# Check if the service is active and provide a message stating such
+if !systemctl is-active --quiet watchdog;
+then
+    echo -e "\n${R}Watchdog service is not active or failed to initialize, check to make sure it was installed
+        correctly." 
+else
+    echo -e "\n${G}Watchdog service is active, started successfully!"
+fi
 
 echo -e "\n${W}For more information on the Linux software based Watchdog daemon configuration settings, visit https://linux.die.net/man/5/watchdog.conf \n"
 countdown=10
 while [ $countdown -gt 0 ]; do
     # -ne clears the terminal line when the cursor is \r returned to the beginning of the line
-    echo -ne "${W}Script will return to terminal in ${B}$countdown second\r"
+    echo -ne "${W}Script will return to terminal in ${B}$countdown\r"
     
     # Decrement the countdown
     ((countdown--))
@@ -265,6 +288,7 @@ while [ $countdown -gt 0 ]; do
     # Wait for 1 second
     sleep 1
 done
+echo -e "\n"
 
 exit 0
 
