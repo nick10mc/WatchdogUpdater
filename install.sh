@@ -8,6 +8,9 @@ if [ ! -x "$0" ]; then
     sudo chmod +x "$0"
 fi
 
+set -e
+set -x
+
 W="\033[1;37m" # White
 R="\033[1;31m" # Red
 
@@ -38,9 +41,11 @@ sudo -E bash -c "
 
     # Install the "load based" watchdog
     echo -e '\nInstalling the "Load Based" watchdog software package...'
-    apt update
-    apt upgrade -y
-    apt-get install -y watchdog
+    sudo apt update > /tmp/install_log.txt 2>&1
+    sleep 1
+    sudo apt upgrade -y >> /tmp/install_log.txt 2>&1
+    sleep 1
+    sudo apt install -y watchdog >> /tmp/install_log.txt 2>&1
     
     whoami
 "
@@ -52,5 +57,6 @@ ${W}after testing the Watchdog, or use the 'DeleteTestPanic' script on the
 desktop that was installed with the panic script."
 
 cd ~/
-rm -rf "$DIR_"
+sleep 30
+#rm -rf "$DIR_"
 exit 0
