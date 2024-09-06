@@ -25,9 +25,10 @@ sudo chmod +x "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/WatchdogUpdater/ins
 1. Open a terminal, and type in the following: watchdog
 2. Set your preffered Watchdog timer period. ("5" recommended)
 3. Set your reboot Watchdog timer period. This should be significantly longer than the Watchdog timer ("1min" recommended)
-4. Confirm your settings
-5. Done! You can check to see if it was indeed updated by opening the system.conf file in /etc/systemd/
-6. Perform a test to double check the function of the timer in a safe environment, read ahead...
+4. Set the software-based Watchdog[^2] settings. This watchdog timer is primarily concerned with the average load over a set period of time.
+5. Confirm your settings
+6. Done! You can check to see if it was indeed updated by opening the system.conf file in /etc/systemd/
+7. Perform a test to double check the function of the timer in a safe environment, read ahead...
 
 ### Real world testing:
 To test the watchdog, the easiest and most foolproof method is not to use a fork bomb (*due to limits in the OS designed to prevent this*), but to trigger a kernel panic. A script is provided in this repository to do just that.
@@ -52,3 +53,4 @@ This script sets two fields in the system.conf file: RuntimeWatchdogSec and Rebo
 The "RuntimeWatchdog" monitors the normal operation of the CPU, while the "RebootWatchdog" monitors the CPU during startup. The "RebootWatchdog" requires a longer time period due to the fact that the CPU may not have enough time to reboot to reset the main "RuntimeWatchdog" timer.
 >
 > [^1]:https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+> [^2]:https://linux.die.net/man/5/watchdog.conf
