@@ -59,7 +59,7 @@ echo -e "\n${W}Do you want to remove the download directory and remaining conten
 read -r CONFIRM
 
 ## Validate input and confirmation
-if [[ "$CONFIRM" = "Y" && "$CONFIRM" = "y" ]];
+if [[ "$CONFIRM" = "Y" || "$CONFIRM" = "y" ]];
 then
     rm -rf "$DIR_" # Removes directory, comment this out for testing
     echo -e "\nCleaning up install files..."
