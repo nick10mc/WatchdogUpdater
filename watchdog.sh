@@ -170,7 +170,7 @@ else
     if grep -q "^RuntimeWatchdogSec=" "$confFile";
     then
         # Lines exist, replace them
-        sudo sed -i "s/^RuntimeWatchdogSec=.*/RuntimeWatchdogSec=$WDRUN_SEC/" "$confFile"
+        sudo sed -i "s|^RuntimeWatchdogSec=.*|RuntimeWatchdogSec=$WDRUN_SEC|" "$confFile"
     else
         ## Append the following to the file:
         sudo echo -e "RuntimeWatchdogSec=$WDRUN_SEC" >> "$confFile"
@@ -179,7 +179,7 @@ else
     ## Now, check the Reboot Watchdog
     if grep -q "^RebootWatchdogSec=" "$confFile";
     then
-        sudo sed -i 's/^RebootWatchdogSec=.*/RebootWatchdogSec=$WDREBT_SEC/' "$confFile"
+        sudo sed -i "s|^RebootWatchdogSec=.*|RebootWatchdogSec=$WDREBT_SEC|" "$confFile"
     else
         ## Append the following to the file:
         sudo echo "RebootWatchdogSec=$WDREBT_SEC" >> "$confFile"
@@ -188,7 +188,7 @@ else
     # Now, check to see if dtparam=watchdog is on in the config file, should be by default in Pis post 2B
     if grep -q "^dtparam=watchdog" "$bootConf";
     then
-        sudo sed -i 's/^dtparam=watchdog=.*/dtparam=watchdog=on/' "$bootConf"
+        sudo sed -i "s|^dtparam=watchdog=.*|/dtparam=watchdog=on|" "$bootConf"
     else
         ## Append the following to the file:
         sudo echo "dtparam=watchdog=on" >> "$bootConf"
@@ -197,7 +197,7 @@ else
     # Now, check to see if the device was defined
     if grep -q "^watchdog-device" "$wdtConf";
     then
-        sudo sed -i 's/^watchdog-device.*/watchdog-device=\/dev\/watchdog/' "$wdtConf"
+        sudo sed -i "s|^watchdog-device.*|watchdog-device=/dev/watchdog|" "$wdtConf"
     else
         ## Append the following to the file:
         sudo echo "watchdog-device=/dev/watchdog" >> "$wdtConf"
@@ -206,7 +206,7 @@ else
     # Now, check to see if the software WDT timeout was defined
     if grep -q "^watchdog-timeout" "$wdtConf";
     then
-        sudo sed -i 's/^watchdog-timeout=.*/watchdog-timeout=15' "$wdtConf" # Maximum on Pis is alledgedly 15s. Little or no need for modifying that
+        sudo sed -i "s|^watchdog-timeout=.*|watchdog-timeout=15|" "$wdtConf" # Maximum on Pis is alledgedly 15s. Little or no need for modifying that
     else
         ## Append the following to the file:
         sudo echo "watchdog-timeout=15" >> "$wdtConf"
@@ -215,7 +215,7 @@ else
     # Set the "load based" software watchdog timer (1min)
     if grep -q "^max-load-1" "$wdtConf";
     then
-        sudo sed -i 's/^max-load-1.*/max-load-1=$max1_/' "$wdtConf"
+        sudo sed -i "s|^max-load-1.*|max-load-1=$max1_|" "$wdtConf"
     else
         ## Append the following to the file:
         sudo echo "max-load-1=$max1_" >> "$wdtConf"
@@ -224,7 +224,7 @@ else
     # Set the "load based" software watchdog timer (5min)
     if grep -q "^max-load-5" "$wdtConf";
     then
-        sudo sed -i 's/^max-load-5.*/max-load-5=$max5_/' "$wdtConf"
+        sudo sed -i "s|^max-load-5.*|max-load-5=$max5_|" "$wdtConf"
     else
         ## Append the following to the file:
         sudo echo "max-load-5=$max5_" >> "$wdtConf"
@@ -233,7 +233,7 @@ else
     # Set the "load based" software watchdog timer (15min)
     if grep -q "^max-load-15" "$wdtConf";
     then
-        sudo sed -i 's/^max-load-15.*/max-load-15=$max15_/' "$wdtConf"
+        sudo sed -i "s|^max-load-15.*|max-load-15=$max15_|" "$wdtConf"
     else
         ## Append the following to the file:
         sudo echo "max-load-15=$max15_" >> "$wdtConf"
