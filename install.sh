@@ -41,11 +41,11 @@ sudo -E bash -c "
 
     # Install the "load based" watchdog
     echo -e '\nInstalling the "Load Based" watchdog software package...'
-    sudo apt update > /tmp/install_log.txt 2>&1
+    apt update > /tmp/install_log.txt 2>&1 || { echo 'Failed to update'; exit 1; }
     sleep 1
-    sudo apt upgrade -y >> /tmp/install_log.txt 2>&1
+    apt upgrade -y >> /tmp/install_log.txt 2>&1 || { echo 'Failed to upgrade'; exit 1; }
     sleep 1
-    sudo apt install -y watchdog >> /tmp/install_log.txt 2>&1
+    apt install -y watchdog >> /tmp/install_log.txt 2>&1 || { echo 'Failed to install watchdog'; exit 1; }
     
     whoami
 "
