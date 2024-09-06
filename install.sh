@@ -40,7 +40,7 @@ sudo -E bash -c "
     echo -e '\nInstalling the "Load Based" watchdog software package...'
     apt update
     apt upgrade -y
-    apt-get install watchdog
+    apt-get install -y watchdog
     
     whoami
 "

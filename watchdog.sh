@@ -175,7 +175,7 @@ else
     if grep -q "^RuntimeWatchdogSec=" "$confFile";
     then
         # Lines exist, replace them
-        sudo sed -i 's/^RuntimeWatchdogSec=.*/RuntimeWatchdogSec=$WDRUN_SEC/' "$confFile"
+        sudo sed -i "s/^RuntimeWatchdogSec=.*/RuntimeWatchdogSec=$WDRUN_SEC/" "$confFile"
     else
         ## Append the following to the file:
         sudo echo -e "RuntimeWatchdogSec=$WDRUN_SEC" >> "$confFile"
