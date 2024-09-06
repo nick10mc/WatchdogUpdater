@@ -71,7 +71,7 @@ ${W}after testing the Watchdog, or use the 'DeleteTestPanic' script on the deskt
 that was installed with the panic script."
 
 # Now, return to the terminal
-countdown=10
+countdown="10"
 while [ $countdown -gt 0 ]; do
     # -ne clears the terminal line when the cursor is \r returned to the beginning of the line
     echo -ne "${W}Script will return to terminal in ${R}$countdown\r"
