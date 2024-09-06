@@ -74,7 +74,7 @@ that was installed with the panic script."
 countdown="10"
 while [ $countdown -gt 0 ]; do
     # -ne clears the terminal line when the cursor is \r returned to the beginning of the line
-    echo -ne "${W}Script will return to terminal in ${R}$countdown\r"
+    echo -ne "${W}Script will return to terminal in ${R}$countdown \r"
     
     # Decrement the countdown
     ((countdown--))
@@ -82,6 +82,6 @@ while [ $countdown -gt 0 ]; do
     # Wait for 1 second
     sleep 1
 done
-echo -e "\n
+echo -e "\n"
 
 exit 0

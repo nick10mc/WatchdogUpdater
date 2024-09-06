@@ -280,7 +280,7 @@ echo -e "\n${W}For more information on the Linux software based Watchdog daemon 
 countdown=10
 while [ $countdown -gt 0 ]; do
     # -ne clears the terminal line when the cursor is \r returned to the beginning of the line
-    echo -ne "${W}Script will return to terminal in ${B}$countdown\r"
+    echo -ne "${W}Script will return to terminal in ${B}$countdown \r"
     
     # Decrement the countdown
     ((countdown--))
