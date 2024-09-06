@@ -12,6 +12,7 @@ sudo apt update
 sudo apt install gh -y
 gh auth login
 ```
+*Not knowing the requirements of the University to release this publicly due to it being a part of my undergraduate research, authorization is required to access this repository*
 
 ### Installation:
 To install the WatchdogUpdater once authorized, execute these commands:
