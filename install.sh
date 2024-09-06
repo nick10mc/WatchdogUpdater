@@ -8,8 +8,7 @@ if [ ! -x "$0" ]; then
     sudo chmod +x "$0"
 fi
 
-set -e
-set -x
+#set -x
 
 W="\033[1;37m" # White
 R="\033[1;31m" # Red
@@ -24,31 +23,45 @@ KERfile="testpanic.sh"
 DELfile="delTest.sh"
 acct=$USER
 echo -e "\nAccount is $acct..."
-# Run following commands as root
-export WDTfile KERfile acct DIR_
-sudo -E bash -c "
-    # Lets transfer our files as root
-    echo -e '\nTransfering files as the root user...'
-    mv -u "$WDTfile" "/usr/local/bin/watchdog"
-    mv -u "$KERfile" "/home/$acct/Desktop/testpanic"
-    mv -u "$DELfile" "/home/$acct/Desktop/DeleteTestPanic"
 
+# Check if files exist before moving them
+if [[ ! -f "$WDTfile" ]]; then
+    echo -e "${R}Error: ${W}File '$WDTfile' not found."
+fi
+if [[ ! -f "$KERfile" ]]; then
+    echo -e "${R}Error: ${W}File '$KERfile' not found."
+fi
+if [[ ! -f "$DELfile" ]]; then
+    echo -e "${R}Error: ${W}File '$DELfile' not found."
+fi
+
+# Run following commands as root
+#export WDTfile KERfile DELfile acct DIR_
+#sudo -E bash -c "
     # Set file permissions
     echo -e '\nSetting file permissions'
-    chmod 755 "/usr/local/bin/watchdog"
-    chmod 755 "/home/$acct/Desktop/testpanic"
-    chmod 555 "/home/$acct/Desktop/DeleteTestPanic"
+    sudo chmod 755 "/usr/local/bin/watchdog"
+    sudo chmod 755 "/home/$acct/Desktop/testpanic"
+    sudo chmod 555 "/home/$acct/Desktop/DeleteTestPanic"
+
+    # Lets transfer our files as root
+    echo -e '\nTransfering files as the root user...'
+    sudo mv -u "$WDTfile" "/usr/local/bin/watchdog"
+    sudo mv -u "$KERfile" "/home/$acct/Desktop/testpanic"
+    sudo mv -u "$DELfile" "/home/$acct/Desktop/DeleteTestPanic"
+
 
     # Install the "load based" watchdog
     echo -e '\nInstalling the "Load Based" watchdog software package...'
-    apt update
+    sudo apt-get update || { echo 'apt update failed' }
     sleep 1
-    apt upgrade -y
+    sudo apt-get upgrade -y || { echo 'apt upgrade failed' }
     sleep 1
-    apt install -y watchdog
+    sudo apt-get install -y watchdog || { echo 'Failed to install watchdog' }
     
-    whoami
-"
+#    whoami
+#"
+
 
 # Remove installation directory and files, cleanup
 echo -e "\nCleaning up install files. "testpanic" installed on desktop. 
