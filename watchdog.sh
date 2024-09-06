@@ -173,7 +173,7 @@ else
         sudo sed -i "s|^RuntimeWatchdogSec=.*|RuntimeWatchdogSec=$WDRUN_SEC|" "$confFile"
     else
         ## Append the following to the file:
-        sudo echo -e "RuntimeWatchdogSec=$WDRUN_SEC" >> "$confFile"
+        echo -e "RuntimeWatchdogSec=$WDRUN_SEC" | sudo tee -a "$confFile" > /dev/null
     fi
 
     ## Now, check the Reboot Watchdog
@@ -182,7 +182,7 @@ else
         sudo sed -i "s|^RebootWatchdogSec=.*|RebootWatchdogSec=$WDREBT_SEC|" "$confFile"
     else
         ## Append the following to the file:
-        sudo echo "RebootWatchdogSec=$WDREBT_SEC" >> "$confFile"
+        echo "RebootWatchdogSec=$WDREBT_SEC" | sudo tee -a "$confFile" > /dev/null
     fi
 
     # Now, check to see if dtparam=watchdog is on in the config file, should be by default in Pis post 2B
@@ -191,7 +191,7 @@ else
         sudo sed -i "s|^dtparam=watchdog=.*|/dtparam=watchdog=on|" "$bootConf"
     else
         ## Append the following to the file:
-        sudo echo "dtparam=watchdog=on" >> "$bootConf"
+        echo "dtparam=watchdog=on" | sudo tee -a "$bootConf" > /dev/null
     fi
 
     # Now, check to see if the device was defined
@@ -200,7 +200,7 @@ else
         sudo sed -i "s|^watchdog-device.*|watchdog-device=/dev/watchdog|" "$wdtConf"
     else
         ## Append the following to the file:
-        sudo echo "watchdog-device=/dev/watchdog" >> "$wdtConf"
+        echo "watchdog-device=/dev/watchdog" | sudo tee -a "$wdtConf" > /dev/null
     fi
 
     # Now, check to see if the software WDT timeout was defined
@@ -209,7 +209,7 @@ else
         sudo sed -i "s|^watchdog-timeout=.*|watchdog-timeout=15|" "$wdtConf" # Maximum on Pis is alledgedly 15s. Little or no need for modifying that
     else
         ## Append the following to the file:
-        sudo echo "watchdog-timeout=15" >> "$wdtConf"
+        echo "watchdog-timeout=15" | sudo tee -a "$wdtConf" > /dev/null
     fi
 
     # Set the "load based" software watchdog timer (1min)
@@ -218,7 +218,7 @@ else
         sudo sed -i "s|^max-load-1.*|max-load-1=$max1_|" "$wdtConf"
     else
         ## Append the following to the file:
-        sudo echo "max-load-1=$max1_" >> "$wdtConf"
+        echo "max-load-1=$max1_" | sudo tee -a "$wdtConf" > /dev/null
     fi
 
     # Set the "load based" software watchdog timer (5min)
@@ -227,7 +227,7 @@ else
         sudo sed -i "s|^max-load-5.*|max-load-5=$max5_|" "$wdtConf"
     else
         ## Append the following to the file:
-        sudo echo "max-load-5=$max5_" >> "$wdtConf"
+        echo "max-load-5=$max5_" | sudo tee -a "$wdtConf" > /dev/null
     fi
 
     # Set the "load based" software watchdog timer (15min)
@@ -236,7 +236,7 @@ else
         sudo sed -i "s|^max-load-15.*|max-load-15=$max15_|" "$wdtConf"
     else
         ## Append the following to the file:
-        sudo echo "max-load-15=$max15_" >> "$wdtConf"
+        echo "max-load-15=$max15_" | sudo tee -a "$wdtConf" > /dev/null
     fi
 
     # Finally, set the software load based watchdog timer as "real time" to prevent it from being swapped out of memory and set priority to 1
@@ -246,8 +246,8 @@ else
         sudo sed -i 'priority=1' "$wdtConf"
     else
         ## Append the following to the file:
-        sudo echo "realtime=yes" >> "$wdtConf"
-        sudo echo "priority=1" >> "$wdtConf"
+        echo "realtime=yes" | sudo tee -a "$wdtConf" > /dev/null
+        echo "priority=1" | sudo tee -a "$wdtConf" > /dev/null
     fi
 
     # Enable and start the watchdog.
@@ -268,7 +268,7 @@ dmesg | grep watchdog
 echo -e "\n${W}Confirmation via systemctl:${B}"
 sudo systemctl status watchdog --no-pager
 # Check if the service is active and provide a message stating such
-if !systemctl is-active --quiet watchdog;
+if ! systemctl is-active --quiet watchdog;
 then
     echo -e "\n${R}Watchdog service is not active or failed to initialize, check to make sure it was installed
         correctly." 
