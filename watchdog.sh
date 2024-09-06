@@ -153,6 +153,11 @@ fi
 echo -e "\n${W}Are you sure you want to enable the Watchdog with these variables? \nY/N?"
 read -r CONFIRM
 
+# Export our values so they can be used by root
+#export CONFIRM confFile bootConf wdtConf max15_ max5_ max1_ WDREBT_SEC WDRUN_SEC
+# Run the following as root - issues with file permissions with system files requires this
+#sudo -E bash -c 
+
 ## Validate input and confirmation
 if [[ "$CONFIRM" != "Y" && "$CONFIRM" != "y" ]];
 then
@@ -170,7 +175,7 @@ else
     if grep -q "^RuntimeWatchdogSec=" "$confFile";
     then
         # Lines exist, replace them
-        sudo sed -i "s/^RuntimeWatchdogSec=.*/RuntimeWatchdogSec=$WDRUN_SEC/" "$confFile"
+        sudo sed -i 's/^RuntimeWatchdogSec=.*/RuntimeWatchdogSec=$WDRUN_SEC/' "$confFile"
     else
         ## Append the following to the file:
         sudo echo -e "RuntimeWatchdogSec=$WDRUN_SEC" >> "$confFile"
@@ -179,7 +184,7 @@ else
     ## Now, check the Reboot Watchdog
     if grep -q "^RebootWatchdogSec=" "$confFile";
     then
-        sudo sed -i "s/^RebootWatchdogSec=.*/RebootWatchdogSec=$WDREBT_SEC/" "$confFile"
+        sudo sed -i 's/^RebootWatchdogSec=.*/RebootWatchdogSec=$WDREBT_SEC/' "$confFile"
     else
         ## Append the following to the file:
         sudo echo "RebootWatchdogSec=$WDREBT_SEC" >> "$confFile"
@@ -188,7 +193,7 @@ else
     # Now, check to see if dtparam=watchdog is on in the config file, should be by default in Pis post 2B
     if grep -q "^dtparam=watchdog" "$bootConf";
     then
-        sudo sed -i "s/^dtparam=watchdog.*/dtparam=watchdog=on/" "$bootConf"
+        sudo sed -i 's/^dtparam=watchdog=.*/dtparam=watchdog=on/' "$bootConf"
     else
         ## Append the following to the file:
         sudo echo "dtparam=watchdog=on" >> "$bootConf"
@@ -197,35 +202,35 @@ else
     # Now, check to see if the device was defined
     if grep -q "^watchdog-device" "$wdtConf";
     then
-        sudo sed -i "s/^watchdog-device.*/watchdog-device = /dev/watchdog/" "$wdtConf"
+        sudo sed -i 's/^watchdog-device.*/watchdog-device=\/dev\/watchdog/' "$wdtConf"
     else
         ## Append the following to the file:
-        sudo echo "watchdog-device = /dev/watchdog" >> "$wdtConf"
+        sudo echo "watchdog-device=/dev/watchdog" >> "$wdtConf"
     fi
 
     # Now, check to see if the software WDT timeout was defined
     if grep -q "^watchdog-timeout" "$wdtConf";
     then
-        sudo sed -i "s/^watchdog-timeout.*/watchdog-timeout = 15" "$wdtConf" # Maximum on Pis is alledgedly 15s. Little or no need for modifying that
+        sudo sed -i 's/^watchdog-timeout=.*/watchdog-timeout=15' "$wdtConf" # Maximum on Pis is alledgedly 15s. Little or no need for modifying that
     else
         ## Append the following to the file:
-        sudo echo "watchdog-timeout = 15" >> "$wdtConf"
+        sudo echo "watchdog-timeout=15" >> "$wdtConf"
     fi
 
     # Set the "load based" software watchdog timer
-    if grep -q "^max-load-1 =" "$wdtConf";
+    if grep -q "^max-load-1" "$wdtConf";
     then
-        sudo sed -i "s/^max-load-1 =.*/max-load-1 = $max1_/" "$wdtConf"
+        sudo sed -i 's/^max-load-1.*/max-load-1=$max1_/' "$wdtConf"
     else
         ## Append the following to the file:
-        sudo echo "max-load-1 = $max1_" >> "$wdtConf"
+        sudo echo "max-load-1=$max1_" >> "$wdtConf"
     fi
 
     # Finally, set the software load based watchdog timer as "real time" to prevent it from being swapped out of memory and set priority to 1
-    if [ grep -q "^realtime =" "$wdtConf" ] && [ grep -q "^priority =" "$wdtConf" ]  ;
+    if grep -q "^realtime" "$wdtConf" && grep -q "^priority" "$wdtConf";
     then
-        sudo sed -i "realtime = yes" "$wdtConf"
-        sudo sed -i "priority = 1" "$wdtConf"
+        sudo sed -i 'realtime=yes' "$wdtConf"
+        sudo sed -i 'priority=1' "$wdtConf"
     else
         ## Append the following to the file:
         sudo echo "realtime = yes" >> "$wdtConf"
@@ -252,7 +257,7 @@ echo -e "\n${W}For more information on the Linux software based Watchdog daemon 
 countdown=10
 while [ $countdown -gt 0 ]; do
     # -ne clears the terminal line when the cursor is \r returned to the beginning of the line
-    echo -ne "${W}Script will return to terminal in ${B}$countdown seconds\r"
+    echo -ne "${W}Script will return to terminal in ${B}$countdown second\r"
     
     # Decrement the countdown
     ((countdown--))
@@ -261,5 +266,5 @@ while [ $countdown -gt 0 ]; do
     sleep 1
 done
 
-return
+exit 0
 

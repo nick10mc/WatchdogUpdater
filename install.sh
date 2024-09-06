@@ -40,7 +40,7 @@ sudo -E bash -c "
     echo -e '\nInstalling the "Load Based" watchdog software package...'
     apt update
     apt upgrade -y
-    apt install watchdog
+    apt-get install watchdog
     
     whoami
 "
@@ -50,6 +50,7 @@ echo -e "\nCleaning up install files. "testpanic" installed on desktop.
 ${R}**IMPORTANT** ${W}Use ${R}'shred -u //home/$USER/Desktop/testpanic' 
 ${W}after testing the Watchdog, or use the 'DeleteTestPanic' script on the 
 desktop that was installed with the panic script."
-sleep 30
+
 cd ~/
 rm -rf "$DIR_"
+exit 0
