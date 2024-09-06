@@ -35,39 +35,30 @@ if [[ ! -f "$DELfile" ]]; then
     echo -e "${R}Error: ${W}File '$DELfile' not found."
 fi
 
-# Run following commands as root
-#export WDTfile KERfile DELfile acct DIR_
-#sudo -E bash -c "
-    # Set file permissions
-    echo -e '\nSetting file permissions'
-    sudo chmod 755 "/usr/local/bin/watchdog"
-    sudo chmod 755 "/home/$acct/Desktop/testpanic"
-    sudo chmod 555 "/home/$acct/Desktop/DeleteTestPanic"
+# Set file permissions
+echo -e '\nSetting file permissions'
+sudo chmod 755 "/usr/local/bin/watchdog"
+sudo chmod 755 "/home/$acct/Desktop/testpanic"
+sudo chmod 555 "/home/$acct/Desktop/DeleteTestPanic"
 
-    # Lets transfer our files as root
-    echo -e '\nTransfering files as the root user...'
-    sudo mv -u "$WDTfile" "/usr/local/bin/watchdog"
-    sudo mv -u "$KERfile" "/home/$acct/Desktop/testpanic"
-    sudo mv -u "$DELfile" "/home/$acct/Desktop/DeleteTestPanic"
-
-
-    # Install the "load based" watchdog
-    echo -e '\nInstalling the "Load Based" watchdog software package...'
-    sudo apt-get update || { echo 'apt update failed' }
-    sleep 1
-    sudo apt-get upgrade -y || { echo 'apt upgrade failed' }
-    sleep 1
-    sudo apt-get install -y watchdog || { echo 'Failed to install watchdog' }
-    
-#    whoami
-#"
-
+# Lets transfer our files as root
+echo -e '\nTransfering files as the root user...'
+sudo mv -u "$WDTfile" "/usr/local/bin/watchdog"
+sudo mv -u "$KERfile" "/home/$acct/Desktop/testpanic"
+sudo mv -u "$DELfile" "/home/$acct/Desktop/DeleteTestPanic"
+# Install the "load based" watchdog
+echo -e '\nInstalling the "Load Based" watchdog software package...'
+sudo apt-get update || { echo 'apt update failed'; }
+sleep 1
+sudo apt-get upgrade -y || { echo 'apt upgrade failed'; }
+sleep 1
+sudo apt-get install -y watchdog || { echo 'Failed to install watchdog'; }
 
 # Remove installation directory and files, cleanup
-echo -e "\nCleaning up install files. "testpanic" installed on desktop. 
-${R}**IMPORTANT** ${W}Use ${R}'shred -u //home/$USER/Desktop/testpanic' 
-${W}after testing the Watchdog, or use the 'DeleteTestPanic' script on the 
-desktop that was installed with the panic script."
+echo -e "\nCleaning up install files. 'testpanic' installed on desktop. 
+${R}**IMPORTANT** ${W}Use ${R}'shred -u /home/$USER/Desktop/testpanic' 
+${W}after testing the Watchdog, or use the 'DeleteTestPanic' script on the desktop 
+that was installed with the panic script."
 
 cd ~/
 sleep 30
