@@ -62,7 +62,7 @@ read -r CONFIRM
 if [[ "$CONFIRM" = "Y" && "$CONFIRM" = "y" ]];
 then
     rm -rf "$DIR_" # Removes directory, comment this out for testing
-    echo -e "\nCleaning up install files...
+    echo -e "\nCleaning up install files..."
 fi
 
 # Remove installation directory and files, cleanup
@@ -82,6 +82,6 @@ while [ $countdown -gt 0 ]; do
     # Wait for 1 second
     sleep 1
 done
-echo -e "\n"
+echo -e "\n
 
 exit 0
