@@ -12,15 +12,14 @@ sudo apt update
 sudo apt install gh -y
 gh auth login
 ```
-And then follow the on-screen prompts.
-Once authorized, execute the following command:
-```
-gh repo clone WatchdogUpdater
-```
 
 ### Installation:
-To install the WatchdogUpdater, simply add owner permisions to and execute the install.sh script located in the /home/$USER/WatchdogUpdater folder.
-
+To install the WatchdogUpdater once authorized, execute these commands:
+```
+gh repo clone WatchdogUpdater
+sudo chmod +x "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/WatchdogUpdater/install.sh"
+"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/WatchdogUpdater/install.sh"
+```
 ### Usage: 
 1. Open a terminal, and type in the following: watchdog
 2. Set your preffered Watchdog timer period. ("5" recommended)
