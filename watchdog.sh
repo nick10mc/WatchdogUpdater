@@ -242,8 +242,8 @@ else
     # Finally, set the software load based watchdog timer as "real time" to prevent it from being swapped out of memory and set priority to 1
     if grep -q "^realtime" "$wdtConf" && grep -q "^priority" "$wdtConf";
     then
-        sudo sed -i 'realtime=yes' "$wdtConf"
-        sudo sed -i 'priority=1' "$wdtConf"
+        sudo sed -i "s|^realtime=.*|realtime=yes|" "$wdtConf"
+        sudo sed -i "s|^priority=.*|priority=1|" "$wdtConf"
     else
         ## Append the following to the file:
         echo "realtime=yes" | sudo tee -a "$wdtConf" > /dev/null
