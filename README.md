@@ -5,14 +5,11 @@
 August 31st, 2024.*
 
 ### Downloading:
-To download the WatchdogUpdater, you must obtain access permission via your Github account, or copy the authorization token provided to you.
-You must then execute the following in a terminal[^1]:
+You must execute the following in a terminal[^1]:
 ```
 sudo apt update
 sudo apt install gh -y
-gh auth login
 ```
-*Not knowing the requirements of the University to release this publicly due to it being a part of my undergraduate research, authorization is required to access this repository*
 
 ### Installation:
 To install the WatchdogUpdater once authorized, execute these commands:
