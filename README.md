@@ -9,12 +9,12 @@ You must execute the following in a terminal[^1]:
 ```
 sudo apt update
 sudo apt install gh -y
+gh repo clone WatchdogUpdater
 ```
 
 ### Installation:
 To install the WatchdogUpdater once authorized, execute these commands:
 ```
-gh repo clone WatchdogUpdater
 sudo chmod +x "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/WatchdogUpdater/install.sh"
 "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/WatchdogUpdater/install.sh"
 ```
