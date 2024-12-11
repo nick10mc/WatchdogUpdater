@@ -11,6 +11,10 @@ sudo apt update
 sudo apt install gh -y
 gh repo clone WatchdogUpdater
 ```
+or:
+```
+git clone https://github.com/nick10mc/WatchdogUpdater
+```
 
 ### Installation:
 To install the WatchdogUpdater once authorized, execute these commands:
